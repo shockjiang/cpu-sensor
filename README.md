@@ -10,27 +10,27 @@ dependency:
 
 * Note that, NDNS need manully configuration, with following ways:
 
-1) create validator configuration based on %s/validator.conf.sample: " %(dir)
-  e.g.: cp %s/validator.conf.sample %s/validator.conf" %(dir, dir)
+1. create validator configuration based on %s/validator.conf.sample: " %(dir)
+  - e.g.: cp %s/validator.conf.sample %s/validator.conf" %(dir, dir)
 
-2) download root certificate of NDN Testbed to %s/anchors/root.cert" %(dir)
-  e.g.: wget http://named-data.net/ndnsec/ndn-testbed-root.ndncert.base64 -O %s/anchors/root.cert" %(dir)
+2. download root certificate of NDN Testbed to %s/anchors/root.cert" %(dir)
+  - e.g.: wget http://named-data.net/ndnsec/ndn-testbed-root.ndncert.base64 -O %s/anchors/root.cert" %(dir)
 
-3) (optional): create log configuration based %s/log4cxx.properties.sample" %(dir)
-  e.g.: cp %s/log4cxx.properties.sample %s/log4cxx.properties" %(dir, dir)
+3. (optional): create log configuration based %s/log4cxx.properties.sample" %(dir)
+  - e.g.: cp %s/log4cxx.properties.sample %s/log4cxx.properties" %(dir, dir)
 
-We also suggest to add create some zones locally as testing data:
+4. (optional): We also suggest to add create some zones locally as testing data:
+     creat zones locally and add RRs (need to configure validator.conf and ndns.conf)
 
-4) (optional): creat zones locally and add RRs (need to configure validator.conf and ndns.conf)
-
-    * Step 1: add the zones to your ndns.conf (see the following example)
-    * Step 2: change to trust anchor to anchors directory (see the following example) in order not to affect normal NDNS.
-    * Step 3: run command: sudo ndns-demo
+    - Step 1: add the zones to your ndns.conf (see the following example)
+    - Step 2: change to trust anchor to anchors directory (see the following example) in order not to affect normal NDNS.
+    - Step 3: run command: sudo ndns-demo
 
 
 ndns.conf example:
 ----------------
-  zones
+```
+zones
 {
   dbFile /usr/local/var/ndns/ndns.db
 
@@ -56,9 +56,10 @@ hints
   hint /ucla
   hint /att
 }
-
+```
 validator.conf example
 ---------------------
+```
 rule
 {
   id "NDNS Validator"
@@ -90,3 +91,4 @@ trust-anchor
   dir anchors
   refresh 1h
 }
+```
