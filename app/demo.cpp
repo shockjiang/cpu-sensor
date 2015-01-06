@@ -37,6 +37,12 @@
 namespace ndn {
 namespace ndns {
 
+constexpr int NDNS_TYTP_TLV = 189;
+constexpr int NDNS_RAW = 0; ///<  mean that MetaInfo does not contain NdnsType
+constexpr int NDNS_RESP = 1; ///< response type means there are requested RR
+constexpr int NDNS_NACK = 2; ///< no requested RR
+constexpr int NDNS_AUTH = 3; ///< only has RR for detailed (longer) label
+
 class NdnsShot : boost::noncopyable
 {
 public:
@@ -94,6 +100,21 @@ private:
   onDataValidated(const shared_ptr<const Data>& data)
   {
     std::cout << "final data pass verification" << std::endl;
+    const Block* block = data->getMetaInfo().findAppMetaInfo(NDNS_TYTP_TLV);
+    if (block != nullptr) {
+      int val = readNonNegativeInteger(*block);
+      if (val == NDNS_RESP)
+        std::cout << "get the final response" << std::endl;
+      else if (val == NDNS_RAW)
+        std::cout << "get NDNS_RAW. not standard RR. " << std::endl;
+      else if (val == NDNS_NACK || val == NDNS_AUTH)
+        std::cout << "get NDNS_NACK. The data does not exist" << std::endl;
+      else
+        std::cout << "unknown NdnsType:" << val << std::endl;
+    }
+    else
+      std::cout << "get NDNS_RAW. not standard RR. " << std::endl;
+
     this->stop();
   }
 
@@ -117,7 +138,7 @@ private:
   {
     std::cout << "[* <- *] express Interest: " << interest.getName() << std::endl;
     m_face.expressInterest(interest,
-                           boost::bind (&NdnsShot::onData, this, _1, _2),
+                           boost::bind (&NdnsShot::onData, this, _1, _2), // NDNS-NACK may return
                            // dynamic binding, if onData is override, bind to the new function
                            boost::bind (&NdnsShot::onTimeout, this, _1) //dynamic binding
                            );
