@@ -43,8 +43,8 @@ namespace ndns {
  */
 class Validator : public ValidatorConfig
 {
-
 public:
+  static constexpr int ENABLE_NDNS_BASED_VALIDATOR = 1;
   static std::string DEFAULT_CONFIG_PATH;// = "/usr/local/etc/ndns";
   //constexpr std::string VALIDATOR_CONF_FILE = DEFAULT_CONFIG_PATH "/" "validator.conf";
   static std::string VALIDATOR_CONF_FILE;
@@ -64,6 +64,12 @@ public:
   validate(const Data& data,
            const OnDataValidated& onValidated,
            const OnDataValidationFailed& onValidationFailed);
+
+  /**
+   * @brief validate the Data, print the result no matter validating succeeds or fails
+   */
+  virtual void
+  validate(const Data& data);
 
 private:
   /**

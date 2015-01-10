@@ -1,0 +1,62 @@
+rule
+{
+  id "NDNS RR Rule"
+  for data
+
+  filter
+  {
+    type name
+    regex ^<>*<KEY|NDNS><>*$
+  }
+  checker
+  {
+    type customized
+    sig-type rsa-sha256
+    key-locator
+    {
+      type name
+      hyper-relation
+      {
+        k-regex ^(<>*)<KEY>(<>*)<><ID-CERT>$
+        k-expand \\1\\2
+        h-relation is-prefix-of
+        p-regex ^(<>*)[<KEY><NDNS>](<>*)<><>$
+        p-expand \\1\\2
+      }
+    }
+
+  }
+}
+
+rule
+{
+  id "App Data Rule"
+  for data
+
+  checker
+  {
+    type customized
+    sig-type rsa-sha256
+    key-locator
+    {
+      type name
+      hyper-relation
+      {
+        k-regex ^(<>*)<KEY>(<>*)<><ID-CERT>$
+        k-expand \\1\\2
+        h-relation is-prefix-of
+        p-regex ^(<>*)$
+        p-expand \\1
+      }
+    }
+  }
+}
+
+trust-anchor
+{
+  ; type file
+  ; file-name anchors/root.cert
+  type dir
+  dir anchors
+  refresh 1h
+}

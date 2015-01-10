@@ -65,7 +65,12 @@ public:
   run()
   {
     Interest interest = this->toInterest();
-    this->express(interest);
+    std::cout << "[* <- *] express Interest: " << interest.getName() << std::endl;
+    m_face.expressInterest(interest,
+                           boost::bind (&NdnsShot::onData, this, _1, _2), // NDNS-NACK may return
+                           // dynamic binding, if onData is override, bind to the new function
+                           boost::bind (&NdnsShot::onTimeout, this, _1) //dynamic binding
+                           );
     try {
       m_face.processEvents();
     }
@@ -79,10 +84,11 @@ private:
   onData(const Interest& interest, const Data& data)
   {
     std::cout << "get data: " << data.getName() << std::endl;
-    m_validator.validate(data,
-                         boost::bind(&NdnsShot::onDataValidated, this, _1),
-                         boost::bind(&NdnsShot::onDataValidationFailed, this, _1, _2)
-                         );
+        m_validator.validate(data,
+                       boost::bind(&NdnsShot::onDataValidated, this, _1),
+                       boost::bind(&NdnsShot::onDataValidationFailed, this, _1, _2)
+                       );
+    // m_validator.validate(data);
   }
 
 
@@ -132,18 +138,6 @@ private:
     Interest interest(m_interestName);
     return interest;
   }
-
-  void
-  express(const Interest& interest)
-  {
-    std::cout << "[* <- *] express Interest: " << interest.getName() << std::endl;
-    m_face.expressInterest(interest,
-                           boost::bind (&NdnsShot::onData, this, _1, _2), // NDNS-NACK may return
-                           // dynamic binding, if onData is override, bind to the new function
-                           boost::bind (&NdnsShot::onTimeout, this, _1) //dynamic binding
-                           );
-  }
-
 
   void
   stop()

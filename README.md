@@ -3,92 +3,38 @@ ndns-demo
 
 This project demonstrates some NDNS use case implementation
 
-dependency:
+Dependency
+----------
 - ndn-cxx
 - NFD
-- NDNS ( we suggest to use version here: https://github.com/shockjiang/ndns/tree/deploy, which contains a ndns-demo that build zones locally and add RRs as testing data)
-
-* Note that, NDNS need manully configuration, with following ways:
-
-1. create validator configuration based on %s/validator.conf.sample: " %(dir)
-  - e.g.: cp %s/validator.conf.sample %s/validator.conf" %(dir, dir)
-
-2. download root certificate of NDN Testbed to %s/anchors/root.cert" %(dir)
-  - e.g.: wget http://named-data.net/ndnsec/ndn-testbed-root.ndncert.base64 -O %s/anchors/root.cert" %(dir)
-
-3. (optional): create log configuration based %s/log4cxx.properties.sample" %(dir)
-  - e.g.: cp %s/log4cxx.properties.sample %s/log4cxx.properties" %(dir, dir)
-
-4. (optional): We also suggest to add create some zones locally as testing data:
-     creat zones locally and add RRs (need to configure validator.conf and ndns.conf)
-
-    - Step 1: add the zones to your ndns.conf (see the following example)
-    - Step 2: change to trust anchor to anchors directory (see the following example) in order not to affect normal NDNS.
-    - Step 3: run command: sudo ndns-demo
+- NDNS system (hosted locally or on NDN Testbed)
 
 
-ndns.conf example:
-----------------
-```
-zones
-{
-  dbFile /usr/local/var/ndns/ndns.db
+Install NDNS to set up local testing environment
+--------------------------------------------------
+- install NDNS ( we suggest to use version here: https://github.com/shockjiang/ndns/tree/deploy, then do the following configuration
+  - contain application called ndns-demo-data that build zones locally and add RRs as testing data)
+  - contain application called ndns-shot that fetch Data by name (without version) and validate it according to specified validation configuration file
 
-  zone {
-    name /
-  }
 
-  zone {
-    name /ndn
-  }
+1. create validator configuration based on %s/validator.conf.sample %(dir), here dir is /usr/local/etc/ndns by default
+   - e.g.: cp %s/validator.conf.sample %s/validator.conf" %(dir, dir)
 
-  zone {
-    name /ndn/edu
-  }
+2. download root certificate of NDN Testbed to %s/anchors/root.cert %(dir)
+   - e.g.: wget http://named-data.net/ndnsec/ndn-testbed-root.ndncert.base64 -O %s/anchors/root.cert" %(dir)
 
-  zone {
-    name /ndn/edu/ucla
-  }
-}
+3. create log configuration based %s/log4cxx.properties.sample %(dir)
+   - e.g.: cp %s/log4cxx.properties.sample %s/log4cxx.properties" %(dir, dir)
 
-hints
-{
-  hint /ucla
-  hint /att
-}
-```
-validator.conf example
----------------------
-```
-rule
-{
-  id "NDNS Validator"
-  for data
-  checker
-  {
-    type customized
-    sig-type rsa-sha256
-    key-locator
-    {
-      type name
-      hyper-relation
-      {
-        k-regex ^(<>*)<KEY>(<>*)<><ID-CERT>$
-        k-expand \\1\\2
-        h-relation is-prefix-of ; data is only allowed to be signed by the zone key
-        p-regex ^(<>*)[<KEY><NDNS>](<>*)<><>$
-        p-expand \\1\\2
-      }
-    }
-  }
-}
+By now, your NDNS tools, including ndns-dig, ndns-shot could work, but we suggest to allow multiple trust anchor for developing/debugging convenience
 
-trust-anchor
-{
-  ; type file
-  ; file-name anchors/root.cert
-  type dir
-  dir anchors
-  refresh 1h
-}
-```
+4. create some zones locally ndns database, and create identities, create a local root cert and revise validator configuration
+
+   - e.g.: sudo ndns-demo-data
+
+Install Demo's validator configuration file
+-------------------------------------------
+
+after compile the ndns-demo
+
+    - e.g.: cp ./build/validator-demo.conf %/validator-demo.conf %(dir)

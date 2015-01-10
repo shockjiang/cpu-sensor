@@ -26,58 +26,18 @@ namespace ndn {
 namespace ndns {
 
 std::string Validator::DEFAULT_CONFIG_PATH = "/usr/local/etc/ndns";
-std::string Validator::VALIDATOR_CONF_FILE = DEFAULT_CONFIG_PATH + "/" + "validator.conf";
+std::string Validator::VALIDATOR_CONF_FILE = DEFAULT_CONFIG_PATH + "/" + "validator-demo.conf";
 
 Validator::Validator(Face& face, const std::string& confFile /* = VALIDATOR_CONF_FILE */)
   : ValidatorConfig(face)
 {
   try {
-    this->load(confFile);
     std::cerr << "Validator loads configuration: " << confFile << std::endl;
+    this->load(confFile);
   }
-  catch (std::exception&) {
-    std::string config =
-      "rule                                                                       \n"
-      "{                                                                          \n"
-      "  id \"NDNS Validator\"                                                    \n"
-      "  for data                                                                 \n"
-      "  checker                                                                  \n"
-      "  {                                                                        \n"
-      "    type customized                                                        \n"
-      "    sig-type rsa-sha256                                                    \n"
-      "    key-locator                                                            \n"
-      "    {                                                                      \n"
-      "      type name                                                            \n"
-      "      hyper-relation                                                       \n"
-      "      {                                                                    \n"
-      "        k-regex ^(<>*)<KEY>(<>*)<><ID-CERT>$                               \n"
-      "        k-expand \\\\1\\\\2                                                \n"
-      "        h-relation is-prefix-of                                            \n"
-      "        p-regex ^(<>*)[<KEY><NDNS>](<>*)<><>$                              \n"
-      "        p-expand \\\\1\\\\2                                                \n"
-      "      }                                                                    \n"
-      "    }                                                                      \n"
-      "  }                                                                        \n"
-      "}                                                                          \n"
-      "                                                                           \n"
-      "                                                                           \n"
-      "trust-anchor                                                               \n"
-      "{                                                                          \n"
-      "  type file                                                                \n"
-      "  file-name \""
-      ;
-
-    config += DEFAULT_CONFIG_PATH + "/" + "anchors/root.cert";
-
-    config +=
-      "\"                                                                         \n"
-      "}                                                                          \n"
-      "                                                                           \n"
-      ;
-
-    this->load(config, "embededConf");
-    std::cout << "Validator loads embedded configuration with anchors path: anchors/root.cert"
-              << std::endl;
+  catch (std::exception& e) {
+    std::cerr << "Fail to load " << confFile << ". Due to: " << e.what() << std::endl;
+    exit(1);
   }
 
 }
@@ -101,6 +61,19 @@ Validator::validate(const Data& data,
                             }
                             );
 }
+
+
+void
+Validator::validate(const Data& data)
+{
+  std::cout << "[* ?? *] verify data: " << data.getName() << ". KeyLocator: "
+            << data.getSignature().getKeyLocator().getName() << std::endl;
+  ValidatorConfig::validate(data,
+                            bind(&Validator::onDataValidated, this, _1),
+                            bind(&Validator::onDataValidationFailed, this, _1, _2)
+                            );
+}
+
 
 void
 Validator::onDataValidated(const shared_ptr<const Data>& data)

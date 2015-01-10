@@ -37,3 +37,11 @@ def build (bld):
             source = app,
             use = 'ndns_validator',
             )
+
+    bld(features='subst',
+        source=['validator-demo.conf.sample.in'],
+        target=['validator-demo.conf.sample'],
+        install_path='${SYSCONFDIR}/ndns',
+        name='validator-sample',
+        help='the ndns-based validator configuration file',
+    )
