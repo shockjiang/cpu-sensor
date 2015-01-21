@@ -2,6 +2,8 @@ ndns-demo
 =========
 
 This project demonstrates some NDNS use case implementation
+- query-ndns: fetch RR from NDNS and validate it
+- cpu-sensor: get local CPU temperature and store it in NDNS
 
 Dependency
 ----------
