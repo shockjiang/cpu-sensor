@@ -14,6 +14,7 @@ def configure(conf):
     conf.check_cfg(package='libndn-cxx', args=['--cflags', '--libs'],
                    uselib_store='NDN_CXX', mandatory=True)
 
+    conf.env.FRAMEWORK = ['IOKit']
 
     USED_BOOST_LIBS = ['system', 'filesystem']
 
