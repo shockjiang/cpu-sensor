@@ -206,6 +206,7 @@ private:
 } // namespace ndns
 } // namespace ndn
 
+
 int
 main(int argc, char* argv[])
 {
@@ -216,8 +217,8 @@ main(int argc, char* argv[])
   Name hint;
   Name zone;
   int ttl = 4;
-  Name rrLabel = "cpu";
-  string rrType = "TXT";
+  Name rrLabel;
+  string rrType = "CPU-INFO";
   string ndnsTypeStr = "resp";
   Name certName;
   std::vector<string> contents;
@@ -235,19 +236,20 @@ main(int argc, char* argv[])
     config.add_options()
       ("hint,H", po::value<Name>(&hint), "forwarding hint")
       ("ttl,T", po::value<int>(&ttl), "TTL of query. default: 4 sec")
-      ("rrtype,t", po::value<string>(&rrType), "set request RR Type. default: TXT")
+      ("rrtype,t", po::value<string>(&rrType), "set request RR Type. default: CPU-INFO")
       ("ndnsType,n", po::value<string>(&ndnsTypeStr), "Set the ndnsType of the resource record. "
        "Potential values are [resp|nack|auth|raw]. Default: resp")
       ("cert,c", po::value<Name>(&certName), "set the name of certificate to sign the update")
-      ("rrlabel,l", po::value<Name>(&rrLabel), "set request RR Label")
       ;
 
     po::options_description hidden("Hidden Options");
     hidden.add_options()
       ("zone,z", po::value<Name>(&zone), "zone the record is delegated")
+      ("rrlabel,l", po::value<Name>(&rrLabel), "set request RR Label")
       ;
     po::positional_options_description postion;
     postion.add("zone", 1);
+    postion.add("rrlabel", 1);
 
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config).add(hidden);
@@ -255,7 +257,7 @@ main(int argc, char* argv[])
     po::options_description config_file_options;
     config_file_options.add(config).add(hidden);
 
-    po::options_description visible("Usage: ndns-update zone rrLabel [-t rrType] [-T TTL] "
+    po::options_description visible("Usage: cpu-sensor zone rrLabel [-t rrType] [-T TTL] "
                                     "[-H hint] [-n NdnsType] [-c cert] "
                                     "[-f contentFile]|[-o content]\n"
                                     "Allowed options");
@@ -268,7 +270,7 @@ main(int argc, char* argv[])
     po::store(parsed, vm);
     po::notify(vm);
 
-    if (vm.count("help")) {
+    if (vm.count("help") || !vm.count("zone") || !vm.count("rrlabel")) {
       std::cout << visible << std::endl;
       return 0;
     }
