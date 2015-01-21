@@ -320,9 +320,8 @@ main(int argc, char* argv[])
     std::string temp = std::to_string(sensor.SMCGetTemperature(key));
     Block block = ndn::dataBlock(ndn::tlv::Content, temp.c_str(), temp.size());
     data.setContent(block);
-    // sensor.SMCClose();
+    sensor.SMCClose();
 
-    // update = re.toData();
     update = make_shared<Data>(data);
     keyChain.sign(*update, certName);
   }
@@ -338,6 +337,7 @@ main(int argc, char* argv[])
 
     updater.start();
     face.processEvents();
+
     if (updater.hasError())
       return 1;
     else
