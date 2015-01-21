@@ -225,7 +225,6 @@ main(int argc, char* argv[])
   string contentFile;
   shared_ptr<Data> update;
 
-  try {
     namespace po = boost::program_options;
     po::variables_map vm;
 
@@ -264,12 +263,12 @@ main(int argc, char* argv[])
 
     visible.add(generic).add(config);
 
+  try {
     po::parsed_options parsed =
       po::command_line_parser(argc, argv).options(cmdline_options).positional(postion).run();
 
     po::store(parsed, vm);
     po::notify(vm);
-
     if (vm.count("help") || !vm.count("zone") || !vm.count("rrlabel")) {
       std::cout << visible << std::endl;
       return 0;
@@ -329,6 +328,7 @@ main(int argc, char* argv[])
   }
   catch (const std::exception& ex) {
     std::cerr << "Parameter Error: " << ex.what() << std::endl;
+    std::cout << visible << std::endl;
     return 1;
   }
 
