@@ -7,8 +7,8 @@ This project aims to
     - local NDNS name server daemon configured with testing zones and data
     - local testing NDN identities, i.e., namespace owner or content producer, whose certificates are issued by local NDNS instance
     - Other NDNS configuration: configuration file, trust anchor, db file, etc
-  - demonstrate some apps that integrating NDNS in its code, demo apps includes:
-    - query-ndns: fetch RR from NDNS and validate it
+  - demonstrate some apps integrating NDNS in its code, including:
+    - query-ndns: fetch data from NDNS and validate it
     - cpu-sensor: get local CPU temperature and store it in NDNS
 
 
