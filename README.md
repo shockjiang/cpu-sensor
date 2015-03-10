@@ -7,7 +7,7 @@ This project aims to
     - testing identities
     - testing zone and its data
     - testing configuration: configuration file, trust anchor, db file
-  - demonstrates some apps that integrating NDNS in its code
+  - demonstrate some apps that integrating NDNS in its code
     - query-ndns: fetch RR from NDNS and validate it
     - cpu-sensor: get local CPU temperature and store it in NDNS
 
@@ -40,6 +40,6 @@ Have Fun!
 - start nfd: sudo nfd-start
 - start ndns-daemo: sudo ndns-daemon
 - try to interact with ndns
-  - dig existing RR: ndns-dig /ndn/edu/ucla/alic -t TXT 
+  - dig existing RR: ndns-dig /ndn/edu/ucla/alice -t TXT 
   - store new RR: ndns-update /ndn/edu/ucla /alice -t LINK -o /att
   - dig new RR: ndns-dig /ndn/edu/ucla/alice -t LINK
