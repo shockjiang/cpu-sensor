@@ -14,9 +14,16 @@ Dependency
 
 Install NDNS to set up local testing environment
 --------------------------------------------------
-- install NDNS ( we suggest to use version here: https://github.com/shockjiang/ndns/tree/deploy, then do the following configuration
-  - contain application called ndns-demo-data that build zones locally and add RRs as testing data)
-  - contain application called ndns-shot that fetch Data by name (without version) and validate it according to specified validation configuration file
+- install NDNS and its hack feature for local expermental enviroment.
+  - the hack feature is here: https://github.com/shockjiang/ndns/tree/deploy. users can add a new remote branch and checkout the deploy branch following the instructions here
+      - git remote add hack https://github.com/shockjiang/ndns.git for existing local repository or clone to create new repository
+      - git pull hack
+      - git checkout deploy
+  - compile and install
+      - ./waf clean && ./waf
+      - sudo ./waf install
+          - hack version contains application called ndns-demo-data that build zones locally and add RRs as testing data)
+          - hack version contains application called ndns-shot that fetch Data by name (without version) and validate it according to specified validation configuration file
 
 
 1. create validator configuration based on %s/validator.conf.sample %(dir), here dir is /usr/local/etc/ndns by default
