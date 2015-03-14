@@ -37,9 +37,17 @@ Data that Local Experimental Environment contains:
 Have Fun!
 ------------------------------------------
 Now all is ready and you can just interact with NDNS after starting nfd and ndns daemon.
-- start nfd: sudo nfd-start
-- start ndns-daemo: sudo ndns-daemon
-- try to interact with ndns
+- start the ndns service
+  - start nfd: sudo nfd-start
+  - start ndns-daemo: sudo ndns-daemon
+- Remotely interact with ndns
   - dig existing RR: ndns-dig /ndn/edu/ucla/alice -t TXT
   - store new RR: ndns-update /ndn/edu/ucla /alice -t LINK -o /att
   - dig new RR: ndns-dig /ndn/edu/ucla/alice -t LINK
+- Zone administrator manipulates data in local database
+  - add RR to db: ndns-add-rr /ndn/edu/ucla /alice TXT2 -t resp -c some-random-content
+  - add RR stored in local file: ndns-add-rr-from-file -f ndn.edu.ucla.jack.cert
+  - read RR from db: ndns-get-rr /ndn/edu/ucla /alice TXT2
+  - remove RR from db: ndns-remove-rr /ndn/edu/ucla  /alice TXT2
+  - list all zones in db: ndns-list-all-zones
+  - list all record in a zone: ndns-list-zone /ndn/edu/ucla
